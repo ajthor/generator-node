@@ -1,0 +1,28 @@
+{
+	"name": "<%= name %>",
+	"version": "0.0.0",
+	"main": "lib/<%= name %>.js",
+	"description": "<%= description %>",
+	"repository": {
+		"type": "git",
+		"url": "<%= repoUrl %>"
+	},
+	"licenses": {
+		"type": "MIT"
+	},
+	"dependencies": {
+		"underscore": "^1.6.0"
+	},
+	"devDependencies": {
+		"github": "^0.1.16",
+		"gulp": "^3.6.2",
+		"gulp-util": "^2.2.14",
+		"gulp-git": "^0.4.1",
+		"gulp-cached": "0.0.3",
+		"gulp-remember": "^0.2.0",
+		"gulp-docco": "0.0.4"
+	},
+	"scripts": {
+		"test": "gulp test"
+	}
+}
