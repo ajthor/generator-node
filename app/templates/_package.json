@@ -14,9 +14,11 @@
 		"underscore": "^1.6.0"
 	},
 	"devDependencies": {
+		"async": "^0.8.0",
 		"github": "^0.1.16",
 		"gulp": "^3.6.2",
 		"gulp-util": "^2.2.14",
+		"gulp-debug": "^0.3.0",
 		"gulp-git": "^0.4.1",
 		"gulp-cached": "0.0.3",
 		"gulp-remember": "^0.2.0",
