@@ -20,20 +20,24 @@ gulp.task('git-init', function(done) {
 	done();
 });
 
-gulp.task('git-initial-commit', ['git-init'], function(done) {
-	gulp.src(['./*', '!./node_modules/**/*.*', '!./index.html'])
+gulp.task('git-initial-commit', ['git-init'], function() {
+	return gulp.src([
+		'.editorconfig',
+		'.jshintrc',
+		'.travis.yml',
+		'lib/**/*',
+		'gulpfile.js',
+		'package.json',
+	], {dot: true})
 		.pipe(cache('master'))
 		.pipe(git.add())
 		.pipe(git.commit('initial commit'))
-		.on('error', gutil.log)
-		.on('end', done);
-
-	git.push('origin', 'master');
+		.on('error', gutil.log);
 });
 
-gulp.task('init', [
-	'git-initial-commit'
-]);
+gulp.task('init', ['git-initial-commit'], function() {
+	git.push('origin', 'master');
+});
 
 
 
@@ -49,32 +53,27 @@ gulp.task('git-create-gh-pages', ['git-init'], function(done) {
 });
 
 gulp.task('git-remove-files', ['git-create-gh-pages'], function() {
-	return gulp.src(['./**/*', '!./gulpfile.js', '!./index.html'], {'nonegate': false})
+	return gulp.src([
+		'.editorconfig',
+		'.jshintrc',
+		'lib/**/*',
+		'package.json'
+	], {dot: true})
 		.pipe(git.rm({args: '-rf'}))
 		.on('error', gutil.log);
 });
 
-gulp.task('git-create-dummy-index', ['git-remove-files'], function(done) {
-	fs.writeFile('index.html', 'Docs coming soon.');
-});
-
-gulp.task('git-commit-gh-pages', ['git-create-dummy-index'], function(done) {
-	gulp.src(['./**/*', '!./node_modules/**/*.*', '!./gulpfile.js'])
-		.pipe(debug())
-		.pipe(git.checkout('gh-pages'))
+gulp.task('git-commit-gh-pages', ['git-remove-files'], function() {
+	return gulp.src(['index.html'])
 		.pipe(cache('gh-pages'))
 		.pipe(git.add())
 		.pipe(git.commit('initial gh-pages commit'))
 		.on('error', gutil.log);
-
-	git.push('origin', 'gh-pages');
-
-	done();
 });
 
-gulp.task('gh-pages', [
-	'git-commit-gh-pages'
-]);
+gulp.task('gh-pages', ['git-commit-gh-pages'], function() {
+	git.push('origin', 'gh-pages');
+});
 
 
 
@@ -94,6 +93,7 @@ gulp.task('git-create-development-branch', ['git-init'], function(done) {
 });
 
 gulp.task('setup', [
+	'init',
 	'gh-pages', 
 	'git-add-remote', 
 	'git-create-development-branch'
