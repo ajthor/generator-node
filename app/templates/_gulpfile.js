@@ -94,11 +94,20 @@ gulp.task('gh-pages', ['git-commit-gh-pages'], function() {
 	git.push('origin', 'gh-pages');
 });
 
+gulp.task('git-checkout-gh-pages', function() {
+	return gulp.src('.')
+		.pipe(git.checkout('gh-pages'))
+		.on('error', gutil.log);
+});
+
 // Dev Task
 // ========
 // The `dev` task basically creates a 'development' branch off of 
 // master and switches to it. Make sure to call this after calling 
 // `gulp init`.
+// 
+// Usage: `gulp dev`
+// 
 gulp.task('git-create-development-branch', ['git-checkout-master'], function() {
 	git.branch('development', {}, function() {});
 	
@@ -109,34 +118,50 @@ gulp.task('git-create-development-branch', ['git-checkout-master'], function() {
 
 gulp.task('dev', ['git-create-development-branch']);
 
-// Docs Task (untested)
-// ====================
-// I would like for the docs task to run docco, switch to the 
-// gh-pages branch, commit the files to the gh-pages branch, and 
-// switch back to master. Haven't tried it yet.
-gulp.task('docs', ['git-checkout-master'], function(done) {
-
-	var timeStamp = Date.now().toDateString();
-
-	gulp.src('lib/**/*.js')
-		.pipe(docco())
-		.pipe(cache('docs'));
-
-	gulp.src('.')
-		.pipe(git.checkout('gh-pages'))
-		.pipe(remember('docs'))
-		.pipe(gulp.dest('./'))
-		.pipe(git.commit('update docs' + timeStamp))
+gulp.task('git-checkout-development', function() {
+	return gulp.src('.')
+		.pipe(git.checkout('development'))
 		.on('error', gutil.log);
+});
 
-	git.push('origin', 'gh-pages');
-	
-	gulp.src('.')
+// Docs Task
+// =========
+// The `docs` task builds docco files, switches to the gh-pages 
+// branch, commits the docs, and switches back to the master branch.
+// 
+// Usage: `gulp docs`
+// 
+gulp.task('docs-make', ['git-checkout-master'], function() {
+	return gulp.src('lib/**/*.js')
+		.pipe(docco())
+		.pipe(gulp.dest('./docs/'))
+		.on('error', gutil.log);
+});
+
+gulp.task('docs-checkout-gh-pages', ['docs-make'], function() {
+	return gulp.src('.')
+		.pipe(git.checkout('gh-pages'))
+		.on('error', gutil.log);
+});
+
+gulp.task('docs-commit', ['docs-checkout-gh-pages'], function() {
+	var timeStamp = Date.now();
+	console.log(timeStamp);
+
+	return gulp.src('docs/')
+		.pipe(git.add())
+		.pipe(git.commit("update docs"))
+		.on('error', gutil.log);
+});
+
+gulp.task('docs-checkout-master', ['docs-commit'], function() {
+	return gulp.src('.')
 		.pipe(git.checkout('master'))
 		.on('error', gutil.log);
+});
 
-	done();
-
+gulp.task('docs', ['docs-checkout-master'], function() {
+	git.push('origin', 'gh-pages');
 });
 
 
