@@ -79,6 +79,8 @@ var NodeGenerator = yeoman.generators.Base.extend({
 	projectFiles: function() {
 		this.template('_package.json', 'package.json');
 		this.template('_gulpfile.js', 'gulpfile.js');
+
+		this.template('app.js', 'lib/' + this.name + '.js');
 	},
 
 	rootFiles: function() {
