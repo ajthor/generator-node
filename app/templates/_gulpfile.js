@@ -3,7 +3,6 @@ var exec = require('child_process').exec;
 
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var debug = require('gulp-debug');
 
 var git = require('gulp-git');
 var github = require('github');
@@ -12,6 +11,9 @@ var docco = require('gulp-docco');
 
 var cache = require('gulp-cached');
 var remember = require('gulp-remember');
+
+
+gulp.task('init', ['setup']);
 
 
 
@@ -35,8 +37,20 @@ gulp.task('git-initial-commit', ['git-init'], function() {
 		.on('error', gutil.log);
 });
 
-gulp.task('init', ['git-initial-commit'], function() {
+gulp.task('git-add-remote', ['git-initial-commit'], function(done) {
+	git.addRemote('origin', '<%= repoUrl %>', {}, function() {});
 	git.push('origin', 'master');
+
+	done();
+});
+
+gulp.task('setup', ['git-add-remote'], function() {
+	git.push('origin', 'master');
+});
+
+gulp.task('git-checkout-master', function() {
+	return gulp.src('.')
+		.pipe(git.checkout('master'));
 });
 
 
@@ -56,6 +70,7 @@ gulp.task('git-remove-files', ['git-create-gh-pages'], function() {
 	return gulp.src([
 		'.editorconfig',
 		'.jshintrc',
+		'.travis.yml',
 		'lib/**/*',
 		'package.json'
 	], {dot: true})
@@ -77,39 +92,27 @@ gulp.task('gh-pages', ['git-commit-gh-pages'], function() {
 
 
 
-gulp.task('git-add-remote', ['git-init'], function(done) {
-	git.addRemote('origin', '<%= repoUrl %>', {}, function() {});
-	git.push('origin', 'master');
-
-	done();
-});
-
-gulp.task('git-create-development-branch', ['git-init'], function(done) {
+gulp.task('git-create-development-branch', ['git-checkout-master'], function() {
 	git.branch('development', {}, function() {});
-	gulp.src('./**/*')
+	
+	return gulp.src('.')
 		.pipe(git.checkout('development'))
-		.on('error', gutil.log)
-		.on('end', done);
+		.on('error', gutil.log);
 });
 
-gulp.task('setup', [
-	'init',
-	'gh-pages', 
-	'git-add-remote', 
-	'git-create-development-branch'
-]);
+gulp.task('dev', ['git-create-development-branch']);
 
 
 
-gulp.task('docs', function() {
+gulp.task('docs', ['git-checkout-master'], function(done) {
 
 	var timeStamp = Date.now().toDateString();
 
-	gulp.src('./lib/**/*.js')
+	gulp.src('lib/**/*.js')
 		.pipe(docco())
 		.pipe(cache('docs'));
 
-	gulp.src('./**/*')
+	gulp.src('.')
 		.pipe(git.checkout('gh-pages'))
 		.pipe(remember('docs'))
 		.pipe(gulp.dest('./'))
@@ -118,7 +121,7 @@ gulp.task('docs', function() {
 
 	git.push('origin', 'gh-pages');
 	
-	gulp.src('./**/*')
+	gulp.src('.')
 		.pipe(git.checkout('master'))
 		.on('error', gutil.log);
 
