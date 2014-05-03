@@ -10,35 +10,24 @@ var npmName = require('npm-name');
 
 var NodeGenerator = yeoman.generators.Base.extend({
 	init: function() {
-		// var done = this.async();
 		this.pkg = require('../package.json');
-
-		this.option('git', {
-			desc: 'Initialize the project with git.',
-			type: Boolean,
-			required: false
-		});
-
-		if((typeof this.options.git === 'undefined') || (this.options.git === null)) {
-			this.options.git = true;
-		}
 
 		this.on('end', function() {
 			if (!this.options['skip-install']) {
 				this.installDependencies({
 					bower: false,
 					callback: function() {
-						this.log(chalk.red('\n\nINITIALIZING GIT'));
-						this.log('Please wait...\n\n');
 
-						if(this.options.git) {
+						if(!this.options['no-git']) {
+							this.log(chalk.red('\n\nINITIALIZING GIT'));
+							this.log('Please wait...\n\n');
+
 							this.spawnCommand('grunt', ['init']);
 						}
+
 					}.bind(this)
 				});
 			}
-
-			// done();
 		});
 	},
 
@@ -51,48 +40,48 @@ var NodeGenerator = yeoman.generators.Base.extend({
 	},
 
 	askFor: function() {
-		var done = this.async();
+		// var done = this.async();
 
-		var prompts = [{
-			name: 'githubUser',
-			message: 'What is your GitHub user name?'
-		}, {
-			name: 'name',
-			message: 'What is the name of your project?',
-			default: path.basename(process.cwd()),
-			filter: function(input) {
-				var done = this.async();
+		// var prompts = [{
+		// 	name: 'githubUser',
+		// 	message: 'What is your GitHub user name?'
+		// }, {
+		// 	name: 'name',
+		// 	message: 'What is the name of your project?',
+		// 	default: path.basename(process.cwd()),
+		// 	filter: function(input) {
+		// 		var done = this.async();
 
-				npmName(input, function(err, available) {
-					if(!available) {
-						this.log(chalk.yellow(name) + 'already exists on NPM.');
-					}
+		// 		npmName(input, function(err, available) {
+		// 			if(!available) {
+		// 				this.log(chalk.yellow(name) + 'already exists on NPM.');
+		// 			}
 
-					done(input);
-				});
-			}
-		}, {
-			name: 'description',
-			message: 'Description'
-		}];
+		// 			done(input);
+		// 		});
+		// 	}
+		// }, {
+		// 	name: 'description',
+		// 	message: 'Description'
+		// }];
 
-		this.prompt(prompts, function(props) {
-			this.githubUser = props.githubUser;
+		// this.prompt(prompts, function(props) {
+		// 	this.githubUser = props.githubUser;
 
-			this.name = this._.slugify(props.name);
-			this.description = props.description;
+		// 	this.name = this._.slugify(props.name);
+		// 	this.description = props.description;
 			
-			this.repoUrl = 'https://github.com/' + props.githubUser + '/' + this.name + '.git';
-			this.repoLink = 'git@github.com:' + props.githubUser + '/' + this.name + '.git';
+		// 	this.repoUrl = 'https://github.com/' + props.githubUser + '/' + this.name + '.git';
+		// 	this.repoLink = 'git@github.com:' + props.githubUser + '/' + this.name + '.git';
 
-			done();
-		}.bind(this));
+		// 	done();
+		// }.bind(this));
 
-		// this.githubUser = 'ajthor';
-		// this.name = 'git-test';
-		// this.description = '';
-		// this.repoUrl = 'https://github.com/' + this.githubUser + '/' + this.name + '.git';
-		// this.repoLink = 'git@github.com:' + this.githubUser + '/' + this.name + '.git';
+		this.githubUser = 'ajthor';
+		this.name = 'git-test';
+		this.description = '';
+		this.repoUrl = 'https://github.com/' + this.githubUser + '/' + this.name + '.git';
+		this.repoLink = 'git@github.com:' + this.githubUser + '/' + this.name + '.git';
 	},
 
 	directories: function() {

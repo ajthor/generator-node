@@ -67,8 +67,6 @@ grunt.initConfig({
 	}
 });
 
-
-grunt.task.loadNpmTasks('grunt-git');
 grunt.task.loadNpmTasks('grunt-shell');
 
 
