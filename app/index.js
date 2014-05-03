@@ -77,6 +77,12 @@ var NodeGenerator = yeoman.generators.Base.extend({
 
 			done();
 		}.bind(this));
+
+		// this.githubUser = 'ajthor';
+		// this.name = 'git-test';
+		// this.description = '';
+		// this.repoUrl = 'https://github.com/' + this.githubUser + '/' + this.name + '.git';
+		// this.repoLink = 'git@github.com:' + this.githubUser + '/' + this.name + '.git';
 	},
 
 	directories: function() {
