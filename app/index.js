@@ -16,11 +16,17 @@ var NodeGenerator = yeoman.generators.Base.extend({
 		this.on('end', function() {
 			if (!this.options['skip-install']) {
 				this.installDependencies({
-					bower: false
+					bower: false,
+					callback: function() {
+						this.log(chalk.red('\n\n---- GULP TASKS ----'));
+						this.log('Run these gulp tasks as needed:');
+						this.log(chalk.green('- gulp init'));
+						this.log(chalk.green('- gulp gh-pages'));
+						this.log(chalk.green('- gulp dev'));
+						this.log(chalk.green('- gulp docs'));
+					}.bind(this)
 				});
 			}
-
-			console.log(chalk.yellow('Run `gulp init` in order to set up your repo on GitHub.\n\n'));
 
 			// done();
 		});
@@ -31,7 +37,7 @@ var NodeGenerator = yeoman.generators.Base.extend({
 		this.log(this.yeoman);
 
 		this.log(chalk.red('---- NODE.JS PROJECT GENERATOR ----'));
-		this.log(chalk.yellow('Use this generator to scaffold basic node.js projects.'))
+		this.log('Use this generator to scaffold basic node.js projects.\n\n');
 	},
 
 	askFor: function() {
@@ -67,6 +73,7 @@ var NodeGenerator = yeoman.generators.Base.extend({
 			this.description = props.description;
 			
 			this.repoUrl = 'https://github.com/' + props.githubUser + '/' + this.name + '.git';
+			this.repoLink = 'git@github.com:' + props.githubUser + '/' + this.name + '.git';
 
 			done();
 		}.bind(this));
@@ -79,6 +86,7 @@ var NodeGenerator = yeoman.generators.Base.extend({
 	projectFiles: function() {
 		this.template('_package.json', 'package.json');
 		this.template('_gulpfile.js', 'gulpfile.js');
+		this.template('_Gruntfile.js', 'Gruntfile.js');
 
 		this.template('app.js', 'lib/' + this.name + '.js');
 	},
