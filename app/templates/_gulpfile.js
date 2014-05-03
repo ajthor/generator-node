@@ -15,9 +15,11 @@ var remember = require('gulp-remember');
 // 
 // Usage: `gulp docs`
 // 
-gulp.task('docs-make', function() {
+
+gulp.task('checkout-master', shell.task(['git checkout master']));
+
+gulp.task('docs-make', ['checkout-master'], function() {
 	return gulp.src('./lib/**/*.js')
-		.pipe(shell(['git checkout master']))
 		.pipe(docco())
 		.pipe(cache('docs'))
 		.pipe(gulp.dest('./docs/'))
