@@ -16,16 +16,7 @@ var NodeGenerator = yeoman.generators.Base.extend({
 			if (!this.options['skip-install']) {
 				this.installDependencies({
 					bower: false,
-					callback: function() {
-
-						if(!this.options['no-git']) {
-							this.log(chalk.red('\n\nINITIALIZING GIT'));
-							this.log('Please wait...\n\n');
-
-							this.spawnCommand('grunt', ['init']);
-						}
-
-					}.bind(this)
+					callback: function() {}.bind(this)
 				});
 			}
 		});
@@ -86,7 +77,6 @@ var NodeGenerator = yeoman.generators.Base.extend({
 	projectFiles: function() {
 		this.template('_package.json', 'package.json');
 		this.template('_gulpfile.js', 'gulpfile.js');
-		this.template('_Gruntfile.js', 'Gruntfile.js');
 
 		this.template('app.js', 'lib/' + this.name + '.js');
 	},
