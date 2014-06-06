@@ -7,18 +7,20 @@
 		"type": "git",
 		"url": "<%= repoUrl %>"
 	},
+	"homepage": "<%= repoUrl %>",
+	"bugs": "<%= repoUrl %>/issues",
 	"licenses": {
 		"type": "MIT"
 	},
 	"dependencies": {
 		"async": "^0.8.0",
-		"underscore": "^1.6.0"
+		"underscore": "^1.6.0",
+		"when": "^3.2.1"
 	},
 	"devDependencies": {
 		"chai": "^1.9.1",
 		"github": "^0.1.16",
 		"grunt": "^0.4.4",
-		"grunt-shell": "^0.7.0",
 		"gulp": "^3.6.2",
 		"gulp-util": "^2.2.14",
 		"gulp-git": "^0.4.1",
@@ -32,5 +34,9 @@
 	},
 	"scripts": {
 		"test": "gulp test"
+	},
+	"directories": {
+		"lib": "./lib",
+		"bin": "./bin"
 	}
 }
