@@ -7,6 +7,45 @@ var docco = require('gulp-docco');
 var cache = require('gulp-cached');
 var remember = require('gulp-remember');
 
+var jshint = require('gulp-jshint');
+var inkblot = require('gulp-inkblot');
+var mocha = require('gulp-mocha');
+
+var scriptFiles = [
+	'./bin/**/*.js',
+	'./src/**/*.js',
+	'./lib/**/*.js'
+];
+// Testing Task
+// ============
+// The testing task runs lint, inkblot, and mocha.
+gulp.task('lint', function () {
+	return gulp.src(scriptFiles)
+		.pipe(jshint())
+		.pipe(jshint.reporter('default'));
+});
+
+gulp.task('inkblot', function () {
+	return gulp.src(scriptFiles)
+		.pipe(inkblot())
+		.on('error', gutil.log);
+});
+
+gulp.task('test', function () {
+	return gulp.src(['./test/**/*.spec.js'])
+		.pipe(mocha())
+		.on('error', gutil.log);
+});
+
+gulp.task('watch', function () {
+	gulp.watch(scriptFiles, ['lint', 'inkblot', 'test']);
+	gulp.watch(['./test/**/*.spec.js'], ['test']);
+});
+
+gulp.task('default', ['lint', 'inkblot', 'test', 'watch']);
+
+
+
 // Docs Task
 // =========
 // The `docs` task builds docco files, switches to the gh-pages 
@@ -15,7 +54,6 @@ var remember = require('gulp-remember');
 // 
 // Usage: `gulp docs`
 // 
-
 gulp.task('checkout-master', shell.task(['git checkout master']));
 
 gulp.task('docs-make', ['checkout-master'], function() {

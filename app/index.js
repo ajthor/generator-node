@@ -71,6 +71,7 @@ var NodeGenerator = yeoman.generators.Base.extend({
 	},
 
 	directories: function() {
+		this.mkdir('bin');
 		this.mkdir('lib');
 	},
 
@@ -78,7 +79,7 @@ var NodeGenerator = yeoman.generators.Base.extend({
 		this.template('_package.json', 'package.json');
 		this.template('_gulpfile.js', 'gulpfile.js');
 
-		this.template('app.js', 'lib/' + this.name + '.js');
+		this.template('app.js', 'bin/' + this.name + '.js');
 	},
 
 	rootFiles: function() {
