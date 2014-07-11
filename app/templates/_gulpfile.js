@@ -4,6 +4,8 @@ var shell = require('gulp-shell');
 var git = require('gulp-git');
 var docco = require('gulp-docco');
 
+var traceur = require('gulp-traceur');
+
 var cache = require('gulp-cached');
 var remember = require('gulp-remember');
 
@@ -74,6 +76,15 @@ gulp.task('docs-commit', ['docs-make'], shell.task([
 
 gulp.task('docs', ['docs-commit'], function() {
 	git.push('origin', 'gh-pages');
+});
+
+// Build Tasks
+// ===========
+// Transpile Harmony code into current JavaScript using Traceur.
+gulp.task('traceur', function() {
+	return gulp.src('public/scripts/**/*.js')
+		.pipe(traceur({sourceMap: true}))
+		.pipe(gulp.dest('build'));
 });
 
 
